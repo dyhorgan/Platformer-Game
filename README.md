@@ -10,8 +10,8 @@ OpenGL 2D Platformer
 * Name and partners name(At most teams of 2 folks total)
   * Team member 1: Dylan Horgan
 
-* How many hours did it take you to complete this final project? 
-* Did you collaborate or share ideas with any other students/TAs/Professors?
+* How many hours did it take you to complete this final project? ?
+* Did you collaborate or share ideas with any other students/TAs/Professors? No
 * Did you use any external resources? 
   * Note it is fair to utilize some tutorials--cite them here. You **must** add your own personal touch however!
   * *edit this*
