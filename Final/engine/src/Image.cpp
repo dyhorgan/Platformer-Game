@@ -48,7 +48,8 @@ void Image::LoadPPM(bool flip){
             magicNumber = line;
          }else if(iteration==1){
             // Returns first token 
-            char *token = strtok((char*)line.c_str(), " "); 
+            char *token = strtok((char*)line.c_str(), " ");
+             
             m_width = atoi(token);
             token = strtok(NULL, " ");
             m_height = atoi(token);
@@ -67,10 +68,27 @@ void Image::LoadPPM(bool flip){
             // max color range is stored here
             // TODO: Can be stored optionally
          }else{
-            m_pixelData[pos] = (uint8_t)atoi(line.c_str());
-            ++pos;
-         }
-          iteration++;
+            //std::cout << line.c_str() << std::endl; 
+            
+            std::string delimiter = " ";
+            size_t position = 0;
+            std::string token;
+            int loop = 0;
+            while ((position = line.find(delimiter)) != std::string::npos) {
+                token = line.substr(0, position);
+                //std::cout << token << std::endl;
+                m_pixelData[pos] = (uint8_t)atoi(token.c_str());
+                ++pos;
+                line.erase(0, position + delimiter.length());
+                loop += 1;
+            }
+            if(!loop){
+                //std::cout << line << std::endl;
+                m_pixelData[pos] = (uint8_t)atoi(line.c_str());
+                ++pos;
+            }
+        }
+        iteration++;
     }             
     ppmFile.close();
   }

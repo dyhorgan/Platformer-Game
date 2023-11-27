@@ -2,6 +2,7 @@
 #include "Camera.hpp"
 #include "Terrain.hpp"
 #include "Sphere.hpp"
+#include "Canvas.hpp"
 
 #include <iostream>
 #include <string>
@@ -128,6 +129,9 @@ SceneNode* Earth;
 // Create the Sun
 Object* sphere;
 SceneNode* Sun;
+
+Object* canvas;
+SceneNode* background;
 // ====================== Create the planets =============
 
 //Loops forever!
@@ -153,6 +157,13 @@ void SDLGraphicsProgram::Loop(){
     sphere = new Sphere();
     sphere->LoadTexture("sun.ppm");
     Sun = new SceneNode(sphere);
+    
+    canvas = new Canvas();
+    canvas->LoadTexture("opeth.ppm");
+    background = new SceneNode(canvas);
+    
+
+    //background = new
 
     // Render our scene starting from the sun.
     m_renderer->setRoot(Sun);
@@ -160,6 +171,8 @@ void SDLGraphicsProgram::Loop(){
     Sun->AddChild(Earth);
     // Make the Moon a child of the Earth
     Earth->AddChild(Moon);
+
+    Sun->AddChild(background);
     
     // Set a default position for our camera
     m_renderer->GetCamera(0)->SetCameraEyePosition(0.0f,2.0f,20.0f);
@@ -265,14 +278,14 @@ void SDLGraphicsProgram::Loop(){
     if (state[SDL_SCANCODE_D]) {
        m_renderer->GetCamera(0)->MoveRight(0.1f);
     }
-    /*
+    
     if (state[SDL_SCANCODE_UP]) {
-        m_renderer->GetCamera(0)->MoveUp(0.1f);
+        m_renderer->GetCamera(0)->MoveForward(0.1f);
     }
 	if (state[SDL_SCANCODE_DOWN]) {
-        m_renderer->GetCamera(0)->MoveDown(0.1f);
+        m_renderer->GetCamera(0)->MoveBackward(0.1f);
     }
-    */
+    
 
         // End SDL_PollEvent loop.
         // ================== Use the planets ===============
@@ -294,11 +307,15 @@ void SDLGraphicsProgram::Loop(){
         
         Moon->GetLocalTransform().Translate(7.0,0.0,0.0);
         	
-
         Earth->GetLocalTransform().LoadIdentity();		
         // ... transform the Earth
         
         Earth->GetLocalTransform().Translate(7.0,0.0,0.0);
+
+        background->GetLocalTransform().LoadIdentity();
+        background->GetLocalTransform().Scale(8.0,8.0,8.0);
+
+        //background->GetLocalTransform().Translate(1.0, 0.0, 0.0);
 
         // Update our scene through our renderer
         m_renderer->Update();
