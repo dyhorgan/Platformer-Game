@@ -213,7 +213,7 @@ void SDLGraphicsProgram::Loop(){
     //background_renderer->setRoot(background);
     
     // Set a default position for our camera
-    m_renderer->GetCamera(0)->SetCameraEyePosition(-1.0f,-0.5f,19.0f);
+    m_renderer->GetCamera(0)->SetCameraEyePosition(-1.0f,0.0f,19.0f);
 
     // Main loop flag
     // If this is quit = 'true' then the program terminates.
@@ -361,7 +361,7 @@ void SDLGraphicsProgram::Loop(){
         Brick4->GetLocalTransform().Translate(2.0,2.0,0.0);
 
         Money->GetLocalTransform().LoadIdentity();
-        Money->GetLocalTransform().Scale(0.5, 0.6, 0.6);
+        Money->GetLocalTransform().Scale(0.45, 0.6, 0.45);
         Money->GetLocalTransform().Translate(0.0, 3.0, 0.0);
         Money->GetLocalTransform().Rotate(rotate, 0.0, 1.0, 0.0);
 
