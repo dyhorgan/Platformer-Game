@@ -186,7 +186,7 @@ void SDLGraphicsProgram::Loop(){
     Brick1 = new SceneNode(panel);
     
     canvas = new Canvas();
-    canvas->LoadTexture("blue.ppm");
+    canvas->LoadTexture("clouds.ppm");
     background = new SceneNode(canvas);
 
     sprite = new Canvas();
@@ -213,7 +213,7 @@ void SDLGraphicsProgram::Loop(){
     //background_renderer->setRoot(background);
     
     // Set a default position for our camera
-    m_renderer->GetCamera(0)->SetCameraEyePosition(-1.0f,0.0f,19.0f);
+    m_renderer->GetCamera(0)->SetCameraEyePosition(-0.5f,1.0f,19.0f);
 
     // Main loop flag
     // If this is quit = 'true' then the program terminates.
@@ -342,7 +342,7 @@ void SDLGraphicsProgram::Loop(){
         background->GetLocalTransform().Scale(16.0,12.0,12.0);
 
         Brick1->GetLocalTransform().LoadIdentity();
-        Brick1->GetLocalTransform().Translate(-0.2,-0.1,1.15);
+        Brick1->GetLocalTransform().Translate(-0.2,0.0,1.15);
         Brick1->GetLocalTransform().Scale(0.04,0.035,0.05);	
         // ... transform the Sun
 
@@ -367,7 +367,7 @@ void SDLGraphicsProgram::Loop(){
 
         character->GetLocalTransform().LoadIdentity();
         character->GetLocalTransform().Scale(0.02, 0.05, 0.05);
-        character->GetLocalTransform().Translate(-9.0,-0.4,23);	
+        character->GetLocalTransform().Translate(-9.0,1.6,23);	
         
         //background_renderer->Update();
         //background_renderer->Render();
