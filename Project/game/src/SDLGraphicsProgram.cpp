@@ -156,6 +156,9 @@ void SDLGraphicsProgram::Loop(){
     // ================== Initialize the planets ===============
     static float rotate = 0.05f;
     float moonRotate = 0.05;
+    float characterX = 0.0;
+    float characterY = 1.75;
+    float characterZ = 6.75;
 
     // Create new geometry for Earth's Moon
     sphere = new Sphere();
@@ -196,9 +199,10 @@ void SDLGraphicsProgram::Loop(){
     //background = new
 
     // Render our scene starting from the sun.
-    m_renderer->setRoot(background);
+    m_renderer->setRoot(Brick1);
+    m_renderer->setBackgroundRoot(background);
     // Make the Earth a child of the Sun
-    background->AddChild(Brick1);
+    //background->AddChild(Brick1);
     background->AddChild(character);
 
     Brick1->AddChild(Brick2);
@@ -213,7 +217,7 @@ void SDLGraphicsProgram::Loop(){
     //background_renderer->setRoot(background);
     
     // Set a default position for our camera
-    m_renderer->GetCamera(0)->SetCameraEyePosition(-0.5f,1.0f,19.0f);
+    m_renderer->GetCamera(0)->SetCameraEyePosition(3.0,1.0f,21.0f);
 
     // Main loop flag
     // If this is quit = 'true' then the program terminates.
@@ -316,13 +320,21 @@ void SDLGraphicsProgram::Loop(){
     if (state[SDL_SCANCODE_D]) {
        m_renderer->GetCamera(0)->MoveRight(0.1f);
     }
-    
+        if (state[SDL_SCANCODE_RIGHT]) {
+            characterX += 0.2;
+        }
+	    if (state[SDL_SCANCODE_LEFT]) {
+            characterX -= 0.2;
+        }   
+    /*
     if (state[SDL_SCANCODE_UP]) {
         m_renderer->GetCamera(0)->MoveForward(0.1f);
     }
 	if (state[SDL_SCANCODE_DOWN]) {
         m_renderer->GetCamera(0)->MoveBackward(0.1f);
     }
+    */
+
     
     
 
@@ -340,10 +352,11 @@ void SDLGraphicsProgram::Loop(){
        
         background->GetLocalTransform().LoadIdentity();
         background->GetLocalTransform().Scale(16.0,12.0,12.0);
-
+        background->GetLocalTransform().Scale(2.0,2.0,2.0);	
+        
         Brick1->GetLocalTransform().LoadIdentity();
-        Brick1->GetLocalTransform().Translate(-0.2,0.0,1.15);
-        Brick1->GetLocalTransform().Scale(0.04,0.035,0.05);	
+        Brick1->GetLocalTransform().Translate(-0.2,0.0,8.0);
+        
         // ... transform the Sun
 
         Brick3->GetLocalTransform().LoadIdentity();	
@@ -361,13 +374,15 @@ void SDLGraphicsProgram::Loop(){
         Brick4->GetLocalTransform().Translate(2.0,2.0,0.0);
 
         Money->GetLocalTransform().LoadIdentity();
-        Money->GetLocalTransform().Scale(0.45, 0.6, 0.45);
+        //Money->GetLocalTransform().Scale(0.45, 0.6, 0.45);
         Money->GetLocalTransform().Translate(0.0, 3.0, 0.0);
         Money->GetLocalTransform().Rotate(rotate, 0.0, 1.0, 0.0);
 
         character->GetLocalTransform().LoadIdentity();
         character->GetLocalTransform().Scale(0.02, 0.05, 0.05);
-        character->GetLocalTransform().Translate(-9.0,1.6,23);	
+        character->GetLocalTransform().Translate(characterX,characterY,characterZ);
+
+	
         
         //background_renderer->Update();
         //background_renderer->Render();

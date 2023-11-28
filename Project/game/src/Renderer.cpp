@@ -38,6 +38,7 @@ void Renderer::Update(){
         //       You may otherwise not want to hardcode
         //       a value of '0' here.
         m_root->Update(m_projectionMatrix, m_cameras[0]);
+        background_root->Update(m_projectionMatrix, m_cameras[0]);
     }
 }
 
@@ -67,12 +68,21 @@ void Renderer::Render(){
     if(m_root!=nullptr){
         m_root->Draw();
     }
+    if(background_root!=nullptr){
+        background_root->Draw();
+    }
 }
 
 // Determines what the root is of the renderer, so the
 // scene can be drawn.
 void Renderer::setRoot(SceneNode* startingNode){
     m_root = startingNode;
+}
+
+// Determines what the root is of the renderer, so the
+// scene can be drawn.
+void Renderer::setBackgroundRoot(SceneNode* startingNode){
+    background_root = startingNode;
 }
 
 

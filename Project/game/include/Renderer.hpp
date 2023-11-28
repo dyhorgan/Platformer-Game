@@ -37,6 +37,11 @@ public:
     // Sets the root of our renderer to some node to
     // draw an entire scene graph
     void setRoot(SceneNode* startingNode);
+
+    // Sets the root of our renderer to some node to
+    // draw an entire scene graph
+    void setBackgroundRoot(SceneNode* startingNode);
+
     // Returns the camera at an index
     Camera*& GetCamera(unsigned int index){
         if(index > m_cameras.size()-1){
@@ -51,6 +56,7 @@ protected:
     std::vector<Camera*> m_cameras;
     // Root scene node
     SceneNode* m_root;
+    SceneNode* background_root;
     // Store the projection matrix for our camera.
     glm::mat4 m_projectionMatrix;
 
