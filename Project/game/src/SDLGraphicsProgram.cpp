@@ -159,6 +159,7 @@ void SDLGraphicsProgram::Loop(){
     float characterX = 0.0;
     float characterY = 1.75;
     float characterZ = 6.75;
+    int time = 0;
 
     // Create new geometry for Earth's Moon
     sphere = new Sphere();
@@ -252,6 +253,11 @@ void SDLGraphicsProgram::Loop(){
                 int mouseY = e.motion.y;
                 //m_renderer->GetCamera(0)->MouseLook(mouseX, mouseY);
             }
+            
+            if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_SPACE && time == 0) {
+                
+                time = 24;
+            }
 
             /*
             switch(e.type){
@@ -281,6 +287,15 @@ void SDLGraphicsProgram::Loop(){
             }
             */
         } 
+    std::cout << "Time: " << time << std::endl;
+    if(time != 0 && time > 12){
+        characterY += 0.1;
+        time -= 1;
+    }   
+    if(time != 0 && time <= 12){
+        characterY -= 0.1;
+        time -= 1;
+    }   
 
         // Retrieve keyboard state
     const Uint8 *state = SDL_GetKeyboardState(NULL);
@@ -325,7 +340,9 @@ void SDLGraphicsProgram::Loop(){
         }
 	    if (state[SDL_SCANCODE_LEFT]) {
             characterX -= 0.2;
-        }   
+        } 
+
+  
     /*
     if (state[SDL_SCANCODE_UP]) {
         m_renderer->GetCamera(0)->MoveForward(0.1f);
