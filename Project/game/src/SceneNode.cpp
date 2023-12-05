@@ -40,6 +40,10 @@ void SceneNode::AddChild(SceneNode* n){
 	m_children.push_back(n);
 }
 
+void SceneNode::PopChild(){
+	m_children.pop_back();
+}
+
 // Draw simply draws the current nodes
 // object and all of its children. This is done by calling directly
 // the objects draw method.

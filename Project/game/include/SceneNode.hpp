@@ -33,6 +33,7 @@ public:
     ~SceneNode();
     // Adds a child node to our current node.
     void AddChild(SceneNode* n);
+    void PopChild();
     // Draws the current SceneNode
     void Draw();
     // Updates the current SceneNode

@@ -157,9 +157,16 @@ void SDLGraphicsProgram::Loop(){
     static float rotate = 0.05f;
     float moonRotate = 0.05;
     float characterX = 0.0;
-    float characterY = 1.75;
+    float characterY = 1.8;
     float characterZ = 6.75;
+    float sceneX;
+    float lastSceneX;
+    float sceneY;
+    float sceneZ;
+    bool jump = false;
     int time = 0;
+    int peak = 0;
+    bool doubleJump = false;
 
     // Create new geometry for Earth's Moon
     sphere = new Sphere();
@@ -219,6 +226,13 @@ void SDLGraphicsProgram::Loop(){
     
     // Set a default position for our camera
     m_renderer->GetCamera(0)->SetCameraEyePosition(3.0,1.0f,21.0f);
+    float cameraX = m_renderer->GetCamera(0)->GetEyeXPosition();
+    float cameraY = m_renderer->GetCamera(0)->GetEyeYPosition();
+    float cameraZ = m_renderer->GetCamera(0)->GetEyeZPosition();
+    float lastCameraX;
+    float lastCameraY;
+    float lastCameraZ;
+    bool moneyGrabbed = false;
 
     // Main loop flag
     // If this is quit = 'true' then the program terminates.
@@ -231,6 +245,9 @@ void SDLGraphicsProgram::Loop(){
 
     // Set the camera speed for how fast we move.
     float cameraSpeed = 5.0f;
+    float ground = 1.64;
+
+    int upTraj = 0;
 
     // While application is running
     while(!quit){
@@ -254,47 +271,40 @@ void SDLGraphicsProgram::Loop(){
                 //m_renderer->GetCamera(0)->MouseLook(mouseX, mouseY);
             }
             
-            if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_SPACE && time == 0) {
+            if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_SPACE && !doubleJump) {
                 
-                time = 24;
+                time += 24;
+                upTraj += 12;
+                if(jump){
+                    doubleJump = true;
+                }else{
+                    jump = true;
+                }
             }
 
-            /*
-            switch(e.type){
-                // Handle keyboard presses
-                case SDL_KEYDOWN:
-                    switch(e.key.keysym.sym){
-                        case SDLK_LEFT:
-                            m_renderer->GetCamera(0)->MoveLeft(cameraSpeed);
-                            break;
-                        case SDLK_RIGHT:
-                            m_renderer->GetCamera(0)->MoveRight(cameraSpeed);
-                            break;
-                        case SDLK_UP:
-                            m_renderer->GetCamera(0)->MoveForward(cameraSpeed);
-                            break;
-                        case SDLK_DOWN:
-                            m_renderer->GetCamera(0)->MoveBackward(cameraSpeed);
-                            break;
-                        case SDLK_RSHIFT:
-                            m_renderer->GetCamera(0)->MoveUp(cameraSpeed);
-                            break;
-                        case SDLK_RCTRL:
-                            m_renderer->GetCamera(0)->MoveDown(cameraSpeed);
-                            break;
-                    }
-                break;
-            }
-            */
         } 
-    std::cout << "Time: " << time << std::endl;
-    if(time != 0 && time > 12){
-        characterY += 0.1;
+    //std::cout << "Time: " << time << std::endl;
+    if(upTraj > 0){
+        
+        characterY += 0.15;
+        
         time -= 1;
+        upTraj -= 1;
     }   
-    if(time != 0 && time <= 12){
-        characterY -= 0.1;
-        time -= 1;
+    if(time > 0 && upTraj == 0){
+        if((characterY - 0.15) <= ground){
+            jump = false;
+            doubleJump = false;
+            time = 0;
+        }else{
+            characterY -= 0.15;
+        
+            time -= 1;
+            if(time == 0){
+                jump = false;
+                doubleJump = false;
+            }
+        }
     }   
 
         // Retrieve keyboard state
@@ -336,21 +346,13 @@ void SDLGraphicsProgram::Loop(){
        m_renderer->GetCamera(0)->MoveRight(0.1f);
     }
         if (state[SDL_SCANCODE_RIGHT]) {
-            characterX += 0.2;
+            sceneX += 0.005;
+            m_renderer->GetCamera(0)->MoveRight(0.16f);
         }
 	    if (state[SDL_SCANCODE_LEFT]) {
-            characterX -= 0.2;
+            sceneX -= 0.005;
+            m_renderer->GetCamera(0)->MoveLeft(0.16f);
         } 
-
-  
-    /*
-    if (state[SDL_SCANCODE_UP]) {
-        m_renderer->GetCamera(0)->MoveForward(0.1f);
-    }
-	if (state[SDL_SCANCODE_DOWN]) {
-        m_renderer->GetCamera(0)->MoveBackward(0.1f);
-    }
-    */
 
     
     
@@ -366,13 +368,68 @@ void SDLGraphicsProgram::Loop(){
         //      The 'Sun' for example will be the only object shown initially
         //      since the rest of the planets are children (or grandchildren)
         //      of the Sun.
-       
+        cameraX = m_renderer->GetCamera(0)->GetEyeXPosition();
+        cameraY = m_renderer->GetCamera(0)->GetEyeYPosition();
+        cameraZ = m_renderer->GetCamera(0)->GetEyeZPosition();
+
+        bool hitWall = false;
+
         background->GetLocalTransform().LoadIdentity();
         background->GetLocalTransform().Scale(16.0,12.0,12.0);
         background->GetLocalTransform().Scale(2.0,2.0,2.0);	
+        background->GetLocalTransform().Translate(sceneX, sceneY, sceneZ);
+
         
         Brick1->GetLocalTransform().LoadIdentity();
         Brick1->GetLocalTransform().Translate(-0.2,0.0,8.0);
+        
+        if(sceneX < -0.06 && !jump){
+            characterY -= 0.15;
+        }
+        if(sceneX >= 0.1 && !jump && sceneX < 0.14){
+            characterY -= 0.15;
+        }
+        
+
+        Brick2->GetLocalTransform().LoadIdentity();		
+        // ... transform the Earth
+        Brick2->GetLocalTransform().Translate(2.0,0.0,0.0);
+
+
+        
+        if(sceneX >= 0.14 && sceneX < .29){
+            if(sceneX > 0.2){
+                if(characterY < 3.2){
+                    hitWall = true;
+                    sceneX = lastSceneX;
+                    m_renderer->GetCamera(0)->SetCameraEyePosition(lastCameraX,lastCameraY,lastCameraZ);
+                }else{
+                    ground = 3.4;
+                    
+                    if(sceneX > .21 && sceneX < .28 && characterY < 4.3){
+                        if(!moneyGrabbed){
+                            Brick4->PopChild();
+                        }
+                        moneyGrabbed = true;
+                    }
+                }
+            }else{
+                ground = 1.7;
+            }
+        }
+
+        if(sceneX >= 0.14 && sceneX < .29 && !jump){
+            if(characterY < (ground-1)){
+                //std::cout << "firing" << std::endl;
+                //std::cout << "ground: " << ground << std::endl;
+                characterY -= 0.15;
+            }else if(characterY > ground){
+                characterY -= 0.15;
+            }
+        }
+        if(sceneX > .29 && !jump){
+            characterY -= 0.15;
+        }
         
         // ... transform the Sun
 
@@ -380,33 +437,46 @@ void SDLGraphicsProgram::Loop(){
         
         // ... transform the Moon
         Brick3->GetLocalTransform().Translate(4.0,0.0,0.0);
-    
-        	
-        Brick2->GetLocalTransform().LoadIdentity();		
-        // ... transform the Earth
-        Brick2->GetLocalTransform().Translate(2.0,0.0,0.0);
 
         Brick4->GetLocalTransform().LoadIdentity();	
         // ... transform the Moon
         Brick4->GetLocalTransform().Translate(2.0,2.0,0.0);
-
-        Money->GetLocalTransform().LoadIdentity();
-        //Money->GetLocalTransform().Scale(0.45, 0.6, 0.45);
-        Money->GetLocalTransform().Translate(0.0, 3.0, 0.0);
-        Money->GetLocalTransform().Rotate(rotate, 0.0, 1.0, 0.0);
+        if(!moneyGrabbed){
+            Money->GetLocalTransform().LoadIdentity();
+            Money->GetLocalTransform().Scale(0.45, 0.45, 0.45);
+            Money->GetLocalTransform().Translate(0.0, 4.0, 0.0);
+            Money->GetLocalTransform().Rotate(rotate, 0.0, 1.0, 0.0);
+        }
 
         character->GetLocalTransform().LoadIdentity();
         character->GetLocalTransform().Scale(0.02, 0.05, 0.05);
+        //std::cout << Brick1->GetLocalTransform().GetInternalMatrix()[0][0] << std::endl;
+        
+
+        
         character->GetLocalTransform().Translate(characterX,characterY,characterZ);
 
-	
-        
+        std::cout << "sceneX: " << sceneX << std::endl;
+        std::cout << "char Y: " << characterY << std::endl;
+        std::cout << "cameraX: " << cameraX << std::endl;
+        std::cout << "cameraY: " << cameraY << std::endl;
+        std::cout << "cameraZ: " << cameraZ << std::endl;
+        std::cout << std::endl;
+
+
         //background_renderer->Update();
         //background_renderer->Render();
         // Update our scene through our renderer
         m_renderer->Update();
         // Render our scene using our selected renderer
         m_renderer->Render();
+        if(!hitWall){
+            lastCameraX = cameraX;
+            lastCameraY = cameraY;
+            lastCameraZ = cameraZ;
+        }
+
+        lastSceneX = sceneX;
 
 
         // Delay to slow things down just a bit!
