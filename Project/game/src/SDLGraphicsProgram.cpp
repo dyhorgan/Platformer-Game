@@ -139,11 +139,33 @@ SceneNode* Brick1;
 Object* canvas;
 SceneNode* background;
 
+Object* life1;
+SceneNode* BrockFace;
+
+Object* life2;
+SceneNode* BrockFace2;
+
+Object* life3;
+SceneNode* BrockFace3;
+
 Object* sprite;
 SceneNode* character;
 
 Object* panel4;
 SceneNode* Brick4;
+
+Object* panel5;
+SceneNode* Brick5;
+Object* panel6;
+SceneNode* Brick6;
+Object* panel7;
+SceneNode* Brick7;
+
+Object* deathCanvas;
+SceneNode* skull;
+
+Object* symbol;
+SceneNode* dollar;
 
 Object* sphere;
 SceneNode* Money;
@@ -167,6 +189,7 @@ void SDLGraphicsProgram::Loop(){
     int time = 0;
     int peak = 0;
     bool doubleJump = false;
+    int lives = 3;
 
     // Create new geometry for Earth's Moon
     sphere = new Sphere();
@@ -179,6 +202,24 @@ void SDLGraphicsProgram::Loop(){
     panel4->LoadTexture("brick.ppm");
     // Create a new node using sphere3 as the geometry
     Brick4 = new SceneNode(panel4);
+
+    // Create new geometry for Earth's Moon
+    panel5 = new Canvas();
+    panel5->LoadTexture("brick.ppm");
+    // Create a new node using sphere3 as the geometry
+    Brick5 = new SceneNode(panel5);
+
+    // Create new geometry for Earth's Moon
+    panel6 = new Canvas();
+    panel6->LoadTexture("brick.ppm");
+    // Create a new node using sphere3 as the geometry
+    Brick6 = new SceneNode(panel6);
+
+    // Create new geometry for Earth's Moon
+    panel7 = new Canvas();
+    panel7->LoadTexture("brick.ppm");
+    // Create a new node using sphere3 as the geometry
+    Brick7 = new SceneNode(panel7);
 
     // Create new geometry for Earth's Moon
     panel3 = new Canvas();
@@ -200,6 +241,26 @@ void SDLGraphicsProgram::Loop(){
     canvas->LoadTexture("clouds.ppm");
     background = new SceneNode(canvas);
 
+    deathCanvas = new Canvas();
+    deathCanvas->LoadTexture("skull.ppm");
+    skull = new SceneNode(deathCanvas);
+
+    symbol = new Canvas();
+    symbol->LoadTexture("moneybag.ppm");
+    dollar = new SceneNode(symbol);
+
+    life1 = new Canvas();
+    life1->LoadTexture("BrockFace.ppm");
+    BrockFace = new SceneNode(life1);
+
+    life2 = new Canvas();
+    life2->LoadTexture("BrockFace.ppm");
+    BrockFace2 = new SceneNode(life2);
+
+    life3 = new Canvas();
+    life3->LoadTexture("BrockFace.ppm");
+    BrockFace3 = new SceneNode(life3);
+
     sprite = new Canvas();
     sprite->LoadTexture("brock.ppm");
     character = new SceneNode(sprite);
@@ -211,7 +272,12 @@ void SDLGraphicsProgram::Loop(){
     m_renderer->setBackgroundRoot(background);
     // Make the Earth a child of the Sun
     //background->AddChild(Brick1);
+    background->AddChild(dollar);
+    background->AddChild(skull);
     background->AddChild(character);
+    background->AddChild(BrockFace);
+    background->AddChild(BrockFace2);
+    background->AddChild(BrockFace3);
 
     Brick1->AddChild(Brick2);
     // Make the Moon a child of the Earth
@@ -220,12 +286,15 @@ void SDLGraphicsProgram::Loop(){
     Brick3->AddChild(Brick4);
 
     Brick4->AddChild(Money);
-    
 
+    Brick3->AddChild(Brick5);
+    Brick5->AddChild(Brick6);
+    Brick6->AddChild(Brick7);
+    
     //background_renderer->setRoot(background);
     
     // Set a default position for our camera
-    m_renderer->GetCamera(0)->SetCameraEyePosition(3.0,1.0f,21.0f);
+    m_renderer->GetCamera(0)->SetCameraEyePosition(3.0,4.0f,21.0f);
     float cameraX = m_renderer->GetCamera(0)->GetEyeXPosition();
     float cameraY = m_renderer->GetCamera(0)->GetEyeYPosition();
     float cameraZ = m_renderer->GetCamera(0)->GetEyeZPosition();
@@ -253,6 +322,7 @@ void SDLGraphicsProgram::Loop(){
     while(!quit){
 
         //Handle events on queue
+        
         while(SDL_PollEvent( &e ) != 0){
             // User posts an event to quit
             // An example is hitting the "x" in the corner of the window.
@@ -309,42 +379,24 @@ void SDLGraphicsProgram::Loop(){
 
         // Retrieve keyboard state
     const Uint8 *state = SDL_GetKeyboardState(NULL);
-    /*
-    if (state[SDL_SCANCODE_UP]) {
-        g_uOffset+=0.01f;
-        //std::cout << "g_uOffset: " << g_uOffset << std::endl;
-    }
-    if (state[SDL_SCANCODE_DOWN]) {
-        g_uOffset-=0.01f;
-        //std::cout << "g_uOffset: " << g_uOffset << std::endl;
-    }
-    if (state[SDL_SCANCODE_LEFT]) {
-        g_uRotate-=1.0f;
-        //std::cout << "g_uRotate: " << g_uRotate<< std::endl;
-    }
-    if (state[SDL_SCANCODE_RIGHT]) {
-        g_uRotate+=1.0f;
-        //std::cout << "g_uRotate: " << g_uRotate<< std::endl;
-    }
-    */
-
-    // Camera
-    // Update our position of the camera
-    if (state[SDL_SCANCODE_W]) {
-        //m_renderer->GetCamera(0)->MoveForward(0.1f);
-        m_renderer->GetCamera(0)->MoveUp(0.1f);
-    }
-    if (state[SDL_SCANCODE_S]) {
-        //m_renderer->GetCamera(0)->MoveBackward(0.1f);
-        m_renderer->GetCamera(0)->MoveDown(0.1f);
-    }
+    if(lives > 0){
+            // Camera
+        // Update our position of the camera
+        if (state[SDL_SCANCODE_W]) {
+            //m_renderer->GetCamera(0)->MoveForward(0.1f);
+            m_renderer->GetCamera(0)->MoveUp(0.1f);
+        }
+        if (state[SDL_SCANCODE_S]) {
+            //m_renderer->GetCamera(0)->MoveBackward(0.1f);
+            m_renderer->GetCamera(0)->MoveDown(0.1f);
+        }
     
-    if (state[SDL_SCANCODE_A]) {
-        m_renderer->GetCamera(0)->MoveLeft(0.1f);
-    }	
-    if (state[SDL_SCANCODE_D]) {
-       m_renderer->GetCamera(0)->MoveRight(0.1f);
-    }
+        if (state[SDL_SCANCODE_A]) {
+            m_renderer->GetCamera(0)->MoveLeft(0.1f);
+        }	
+        if (state[SDL_SCANCODE_D]) {
+            m_renderer->GetCamera(0)->MoveRight(0.1f);
+        }
         if (state[SDL_SCANCODE_RIGHT]) {
             sceneX += 0.005;
             m_renderer->GetCamera(0)->MoveRight(0.16f);
@@ -353,9 +405,14 @@ void SDLGraphicsProgram::Loop(){
             sceneX -= 0.005;
             m_renderer->GetCamera(0)->MoveLeft(0.16f);
         } 
-
     
-    
+        if (state[SDL_SCANCODE_UP]) {
+            m_renderer->GetCamera(0)->MoveForward(0.1f);
+        }	
+        if (state[SDL_SCANCODE_DOWN]) {
+            m_renderer->GetCamera(0)->MoveBackward(0.1f);
+        }
+    }
 
         // End SDL_PollEvent loop.
         // ================== Use the planets ===============
@@ -378,25 +435,26 @@ void SDLGraphicsProgram::Loop(){
         background->GetLocalTransform().Scale(16.0,12.0,12.0);
         background->GetLocalTransform().Scale(2.0,2.0,2.0);	
         background->GetLocalTransform().Translate(sceneX, sceneY, sceneZ);
-
         
         Brick1->GetLocalTransform().LoadIdentity();
         Brick1->GetLocalTransform().Translate(-0.2,0.0,8.0);
         
-        if(sceneX < -0.06 && !jump){
-            characterY -= 0.15;
+        
+        if(sceneX < -0.05){
+            ground = -4;
         }
-        if(sceneX >= 0.1 && !jump && sceneX < 0.14){
-            characterY -= 0.15;
+        if(sceneX > -0.05 && sceneX < 0.1){
+            ground = 1.64;
+        }
+
+        if(sceneX > 0.1 && sceneX < 0.14){
+            ground = -4;
         }
         
-
         Brick2->GetLocalTransform().LoadIdentity();		
         // ... transform the Earth
         Brick2->GetLocalTransform().Translate(2.0,0.0,0.0);
 
-
-        
         if(sceneX >= 0.14 && sceneX < .29){
             if(sceneX > 0.2){
                 if(characterY < 3.2){
@@ -415,9 +473,14 @@ void SDLGraphicsProgram::Loop(){
                 }
             }else{
                 ground = 1.7;
+                if(characterY < ground){
+                    hitWall = true;
+                    sceneX = lastSceneX;
+                    m_renderer->GetCamera(0)->SetCameraEyePosition(lastCameraX,lastCameraY,lastCameraZ);
+                }
             }
         }
-
+        /*
         if(sceneX >= 0.14 && sceneX < .29 && !jump){
             if(characterY < (ground-1)){
                 //std::cout << "firing" << std::endl;
@@ -427,9 +490,9 @@ void SDLGraphicsProgram::Loop(){
                 characterY -= 0.15;
             }
         }
-        if(sceneX > .29 && !jump){
-            characterY -= 0.15;
-        }
+        */
+
+        
         
         // ... transform the Sun
 
@@ -448,13 +511,49 @@ void SDLGraphicsProgram::Loop(){
             Money->GetLocalTransform().Rotate(rotate, 0.0, 1.0, 0.0);
         }
 
+        if(sceneX > .29 && sceneX < .38){
+            ground = -4;
+        }
+        if(sceneX > .38 && sceneX < .605){
+            ground = 1.64;
+        }
+
+        Brick5->GetLocalTransform().LoadIdentity();	
+        Brick5->GetLocalTransform().Translate(8.0,0.0,0.0);
+
+        Brick6->GetLocalTransform().LoadIdentity();	
+        Brick6->GetLocalTransform().Translate(2.0,0.0,0.0);
+
+        Brick7->GetLocalTransform().LoadIdentity();	
+        Brick7->GetLocalTransform().Translate(2.0,0.0,0.0);
+
         character->GetLocalTransform().LoadIdentity();
         character->GetLocalTransform().Scale(0.02, 0.05, 0.05);
         //std::cout << Brick1->GetLocalTransform().GetInternalMatrix()[0][0] << std::endl;
         
+        character->GetLocalTransform().Translate(characterX,characterY,characterZ);
+
+        BrockFace->GetLocalTransform().LoadIdentity();
+        BrockFace->GetLocalTransform().Scale(0.02,0.025,0.025);
+        BrockFace->GetLocalTransform().Translate(8.0,10.0,24.0);
+
+        BrockFace2->GetLocalTransform().LoadIdentity();
+        BrockFace2->GetLocalTransform().Scale(0.02,0.025,0.025);
+        BrockFace2->GetLocalTransform().Translate(9.7,10.0,24.0);
+
+        BrockFace3->GetLocalTransform().LoadIdentity();
+        BrockFace3->GetLocalTransform().Scale(0.02,0.025,0.025);
+        BrockFace3->GetLocalTransform().Translate(11.4,10.0,24.0);
+
+        dollar->GetLocalTransform().LoadIdentity();
+        dollar->GetLocalTransform().Scale(0.02,0.025,0.025);
+        dollar->GetLocalTransform().Translate(-1.4,10.0,24.0);
 
         
-        character->GetLocalTransform().Translate(characterX,characterY,characterZ);
+        if((characterY-0.15) >= ground && !jump){
+            characterY -= 0.15;
+        }
+        
 
         std::cout << "sceneX: " << sceneX << std::endl;
         std::cout << "char Y: " << characterY << std::endl;
@@ -463,7 +562,29 @@ void SDLGraphicsProgram::Loop(){
         std::cout << "cameraZ: " << cameraZ << std::endl;
         std::cout << std::endl;
 
+        if((characterY-0.15) <= -4 ){
+            background->PopChild();
+            sceneX = 0;
+            characterX = 0.0;
+            characterY = 1.8;
+            characterZ = 6.75;
+            cameraX = 3;
+            cameraY = 4;
+            cameraZ = 21;
+            m_renderer->GetCamera(0)->SetCameraEyePosition(cameraX,cameraY,cameraZ);
+            lives -=1;
+        }
 
+        int num = 0;
+        if(lives == 0){
+            if(num == 0){
+                //background->PopChild();
+                num += 1;
+            }
+            skull->GetLocalTransform().LoadIdentity();
+            skull->GetLocalTransform().Scale(0.2,0.2,0.2);
+            skull->GetLocalTransform().Translate(0.45,0.85,2.4);
+        }
         //background_renderer->Update();
         //background_renderer->Render();
         // Update our scene through our renderer
