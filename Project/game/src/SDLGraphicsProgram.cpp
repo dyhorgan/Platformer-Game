@@ -161,6 +161,13 @@ SceneNode* Brick6;
 Object* panel7;
 SceneNode* Brick7;
 
+Object* panel8;
+SceneNode* Brick8;
+Object* panel9;
+SceneNode* Brick9;
+Object* panel10;
+SceneNode* Brick10;
+
 Object* deathCanvas;
 SceneNode* skull;
 
@@ -169,6 +176,12 @@ SceneNode* dollar;
 
 Object* sphere;
 SceneNode* Money;
+
+Object* number1;
+SceneNode* zero;
+
+Object* number2;
+SceneNode* hundred;
 
 // ====================== Create the planets =============
 
@@ -221,6 +234,24 @@ void SDLGraphicsProgram::Loop(){
     // Create a new node using sphere3 as the geometry
     Brick7 = new SceneNode(panel7);
 
+        // Create new geometry for Earth's Moon
+    panel8 = new Canvas();
+    panel8->LoadTexture("brick.ppm");
+    // Create a new node using sphere3 as the geometry
+    Brick8 = new SceneNode(panel8);
+
+        // Create new geometry for Earth's Moon
+    panel9 = new Canvas();
+    panel9->LoadTexture("brick.ppm");
+    // Create a new node using sphere3 as the geometry
+    Brick9 = new SceneNode(panel9);
+
+        // Create new geometry for Earth's Moon
+    panel10 = new Canvas();
+    panel10->LoadTexture("brick.ppm");
+    // Create a new node using sphere3 as the geometry
+    Brick10 = new SceneNode(panel10);
+
     // Create new geometry for Earth's Moon
     panel3 = new Canvas();
     panel3->LoadTexture("brick.ppm");
@@ -248,6 +279,14 @@ void SDLGraphicsProgram::Loop(){
     symbol = new Canvas();
     symbol->LoadTexture("moneybag.ppm");
     dollar = new SceneNode(symbol);
+
+    number1 = new Canvas();
+    number1->LoadTexture("num000.ppm");
+    zero = new SceneNode(number1);
+
+    number2 = new Canvas();
+    number2->LoadTexture("num100.ppm");
+    hundred = new SceneNode(number2);
 
     life1 = new Canvas();
     life1->LoadTexture("BrockFace.ppm");
@@ -279,6 +318,9 @@ void SDLGraphicsProgram::Loop(){
     background->AddChild(BrockFace2);
     background->AddChild(BrockFace3);
 
+    dollar->AddChild(zero);
+    dollar->AddChild(hundred);
+
     Brick1->AddChild(Brick2);
     // Make the Moon a child of the Earth
     Brick2->AddChild(Brick3);
@@ -290,6 +332,10 @@ void SDLGraphicsProgram::Loop(){
     Brick3->AddChild(Brick5);
     Brick5->AddChild(Brick6);
     Brick6->AddChild(Brick7);
+
+    Brick7->AddChild(Brick8);
+    Brick8->AddChild(Brick9);
+    Brick9->AddChild(Brick10);
     
     //background_renderer->setRoot(background);
     
@@ -439,7 +485,6 @@ void SDLGraphicsProgram::Loop(){
         Brick1->GetLocalTransform().LoadIdentity();
         Brick1->GetLocalTransform().Translate(-0.2,0.0,8.0);
         
-        
         if(sceneX < -0.05){
             ground = -4;
         }
@@ -477,6 +522,7 @@ void SDLGraphicsProgram::Loop(){
                     hitWall = true;
                     sceneX = lastSceneX;
                     m_renderer->GetCamera(0)->SetCameraEyePosition(lastCameraX,lastCameraY,lastCameraZ);
+                    characterY -= 0.05;
                 }
             }
         }
@@ -509,6 +555,13 @@ void SDLGraphicsProgram::Loop(){
             Money->GetLocalTransform().Scale(0.45, 0.45, 0.45);
             Money->GetLocalTransform().Translate(0.0, 4.0, 0.0);
             Money->GetLocalTransform().Rotate(rotate, 0.0, 1.0, 0.0);
+            zero->GetLocalTransform().LoadIdentity();
+            zero->GetLocalTransform().Translate(2.0,0.0,0.0);
+        }else{
+            std::cout << "money grabbed" << std::endl;
+            zero->GetLocalTransform().Scale(0.0,0.0,0.0);
+            hundred->GetLocalTransform().LoadIdentity();
+            hundred->GetLocalTransform().Translate(2.0,0.0,0.0);
         }
 
         if(sceneX > .29 && sceneX < .38){
@@ -516,8 +569,13 @@ void SDLGraphicsProgram::Loop(){
         }
         if(sceneX > .38 && sceneX < .605){
             ground = 1.64;
+            if(characterY < ground){
+                hitWall = true;
+                sceneX = lastSceneX;
+                m_renderer->GetCamera(0)->SetCameraEyePosition(lastCameraX,lastCameraY,lastCameraZ);
+                characterY -= 0.05;
+            }
         }
-
         Brick5->GetLocalTransform().LoadIdentity();	
         Brick5->GetLocalTransform().Translate(8.0,0.0,0.0);
 
@@ -526,6 +584,15 @@ void SDLGraphicsProgram::Loop(){
 
         Brick7->GetLocalTransform().LoadIdentity();	
         Brick7->GetLocalTransform().Translate(2.0,0.0,0.0);
+
+        Brick8->GetLocalTransform().LoadIdentity();	
+        Brick8->GetLocalTransform().Translate(4.0,3.0,0.0);
+
+        Brick9->GetLocalTransform().LoadIdentity();	
+        Brick9->GetLocalTransform().Translate(4.0,3.0,0.0);
+
+        Brick10->GetLocalTransform().LoadIdentity();	
+        Brick10->GetLocalTransform().Translate(4.0,0.0,0.0);
 
         character->GetLocalTransform().LoadIdentity();
         character->GetLocalTransform().Scale(0.02, 0.05, 0.05);
