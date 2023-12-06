@@ -13,7 +13,6 @@ OpenGL 2D Platformer
 * How many hours did it take you to complete this final project? 80
 * Did you collaborate or share ideas with any other students/TAs/Professors? No
 * Did you use any external resources? 
-  * Note it is fair to utilize some tutorials--cite them here. You **must** add your own personal touch however!
   * Assignment11
   * *edit this*
   * *edit this*
