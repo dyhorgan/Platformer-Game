@@ -9,32 +9,28 @@
 #include <sstream>
 #include <fstream>
 
-// Initialization function
-// Returns a true or false value based on successful completion of setup.
-// Takes in dimensions of window.
 SDLGraphicsProgram::SDLGraphicsProgram(int w, int h){
-	// Initialization flag
+	
 	bool success = true;
-	// String to hold any errors that occur.
+	
 	std::stringstream errorStream;
-	// The window we'll be rendering to
+	
 	m_window = NULL;
 
-	// Initialize SDL
 	if(SDL_Init(SDL_INIT_VIDEO)< 0){
 		errorStream << "SDL could not initialize! SDL Error: " << SDL_GetError() << "\n";
 		success = false;
 	}
 	else{
-		//Use OpenGL 3.3 core
+		
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
 		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
-		// We want to request a double buffer for smooth updating.
+		
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-		//Create window
+		
 		m_window = SDL_CreateWindow( "Lab",
                                 SDL_WINDOWPOS_UNDEFINED,
                                 SDL_WINDOWPOS_UNDEFINED,
@@ -42,33 +38,33 @@ SDLGraphicsProgram::SDLGraphicsProgram(int w, int h){
                                 h,
                                 SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
 
-		// Check if Window did not create.
+		
 		if( m_window == NULL ){
 			errorStream << "Window could not be created! SDL Error: " << SDL_GetError() << "\n";
 			success = false;
 		}
 
-		//Create an OpenGL Graphics Context
+		
 		m_openGLContext = SDL_GL_CreateContext( m_window );
 		if( m_openGLContext == NULL){
 			errorStream << "OpenGL context could not be created! SDL Error: " << SDL_GetError() << "\n";
 			success = false;
 		}
 
-		// Initialize GLAD Library
+		
 		if(!gladLoadGLLoader(SDL_GL_GetProcAddress)){
 			errorStream << "Failed to iniitalize GLAD\n";
 			success = false;
 		}
 
-		//Initialize OpenGL
+		
 		if(!InitGL()){
 			errorStream << "Unable to initialize OpenGL!\n";
 			success = false;
 		}
   	}
 
-    // If initialization did not work, then print out a list of errors in the constructor.
+    
     if(!success){
         errorStream << "SDLGraphicsProgram::SDLGraphicsProgram - Failed to initialize!\n";
         std::string errors=errorStream.str();
@@ -77,62 +73,37 @@ SDLGraphicsProgram::SDLGraphicsProgram(int w, int h){
         SDL_Log("SDLGraphicsProgram::SDLGraphicsProgram - No SDL, GLAD, or OpenGL, errors detected during initialization\n\n");
     }
 
-	// SDL_LogSetAllPriority(SDL_LOG_PRIORITY_WARN); // Uncomment to enable extra debug support!
 	GetOpenGLVersionInfo();
 
-
-    // Setup our Renderer
-    m_renderer = new Renderer(w,h);  
-    //background_renderer = new Renderer(w,h);  
+    m_renderer = new Renderer(w,h);   
 }
 
 
-// Proper shutdown of SDL and destroy initialized objects
 SDLGraphicsProgram::~SDLGraphicsProgram(){
     if(m_renderer!=nullptr){
         delete m_renderer;
     } 
-    /* 
-    if(background_renderer!=nullptr){
-        delete background_renderer;
-    }
-    */
 
-
-    //Destroy window
 	SDL_DestroyWindow( m_window );
-	// Point m_window to NULL to ensure it points to nothing.
+	
 	m_window = nullptr;
-	//Quit SDL subsystems
+	
 	SDL_Quit();
 }
 
-
-// Initialize OpenGL
-// Setup any of our shaders here.
 bool SDLGraphicsProgram::InitGL(){
-	//Success flag
+
 	bool success = true;
 
 	return success;
 }
 
-// ====================== Create the planets =============
-// NOTE: I will admit it is a little lazy to have these as globals,
-//       we could build on our ObjectManager structure to manage the
-//       each object that is inserted and automatically create a 'SceneNode'
-//       for it for example. Or otherwise, build a 'SceneTree' class that
-//       manages creating nodes and setting their type.
-//       (e.g. A good use of the Factory Design Pattern if you'd like to
-//             invetigate further--but it is beyond the scope of this assignment).
-
-// Create the Moon
 Object* panel3;
 SceneNode* Brick3;
-// Create the Earth
+
 Object* panel2;
 SceneNode* Brick2;
-// Create the Sun
+
 Object* panel;
 SceneNode* Brick1;
 
@@ -192,12 +163,8 @@ SceneNode* zero;
 Object* number2;
 SceneNode* hundred;
 
-// ====================== Create the planets =============
-
-//Loops forever!
 void SDLGraphicsProgram::Loop(){
 
-    // ================== Initialize the planets ===============
     static float rotate = 0.05f;
     float moonRotate = 0.05;
     float characterX = 0.0;
@@ -229,72 +196,60 @@ void SDLGraphicsProgram::Loop(){
     bool patrolDir = true;
     bool won = false;
 
-    // Create new geometry for Earth's Moon
     sphere = new Sphere();
     sphere->LoadTexture("dollarsigns.ppm");
-    // Create a new node using sphere3 as the geometry
+    
     Money = new SceneNode(sphere);
 
-    // Create new geometry for Earth's Moon
     panel4 = new Canvas();
     panel4->LoadTexture("brick.ppm");
-    // Create a new node using sphere3 as the geometry
+   
     Brick4 = new SceneNode(panel4);
 
-    // Create new geometry for Earth's Moon
     panel5 = new Canvas();
     panel5->LoadTexture("brick.ppm");
-    // Create a new node using sphere3 as the geometry
+    
     Brick5 = new SceneNode(panel5);
 
-    // Create new geometry for Earth's Moon
     enemy = new Canvas();
     enemy->LoadTexture("monster.ppm");
-    // Create a new node using sphere3 as the geometry
+    
     Phantom = new SceneNode(enemy);
 
-    // Create new geometry for Earth's Moon
     panel6 = new Canvas();
     panel6->LoadTexture("brick.ppm");
-    // Create a new node using sphere3 as the geometry
+    
     Brick6 = new SceneNode(panel6);
 
-    // Create new geometry for Earth's Moon
     panel7 = new Canvas();
     panel7->LoadTexture("brick.ppm");
-    // Create a new node using sphere3 as the geometry
+    
     Brick7 = new SceneNode(panel7);
 
-        // Create new geometry for Earth's Moon
     panel8 = new Canvas();
     panel8->LoadTexture("brick.ppm");
-    // Create a new node using sphere3 as the geometry
+
     Brick8 = new SceneNode(panel8);
 
-        // Create new geometry for Earth's Moon
     panel9 = new Canvas();
     panel9->LoadTexture("brick.ppm");
-    // Create a new node using sphere3 as the geometry
+    
     Brick9 = new SceneNode(panel9);
 
-        // Create new geometry for Earth's Moon
     panel10 = new Canvas();
     panel10->LoadTexture("brick.ppm");
-    // Create a new node using sphere3 as the geometry
+    
     Brick10 = new SceneNode(panel10);
 
-    // Create new geometry for Earth's Moon
     panel3 = new Canvas();
     panel3->LoadTexture("brick.ppm");
-    // Create a new node using sphere3 as the geometry
+   
     Brick3 = new SceneNode(panel3);
 
-    // Create the Earth
     panel2 = new Canvas();
     panel2->LoadTexture("brick.ppm");
     Brick2 = new SceneNode(panel2);
 
-    // Create the Sun
     panel = new Canvas();
     panel->LoadTexture("brick.ppm");
     Brick1 = new SceneNode(panel);
@@ -343,13 +298,10 @@ void SDLGraphicsProgram::Loop(){
     sprite->LoadTexture("brock.ppm");
     character = new SceneNode(sprite);
 
-    //background = new
-
-    // Render our scene starting from the sun.
+    
     m_renderer->setRoot(Brick1);
     m_renderer->setBackgroundRoot(background);
-    // Make the Earth a child of the Sun
-    //background->AddChild(Brick1);
+
     background->AddChild(dollar);
     background->AddChild(youWin);
     background->AddChild(skull);
@@ -365,7 +317,7 @@ void SDLGraphicsProgram::Loop(){
     dollar->AddChild(hundred);
 
     Brick1->AddChild(Brick2);
-    // Make the Moon a child of the Earth
+    
     Brick2->AddChild(Brick3);
 
     Brick3->AddChild(Brick4);
@@ -376,15 +328,10 @@ void SDLGraphicsProgram::Loop(){
     Brick5->AddChild(Brick6);
     Brick6->AddChild(Brick7);
 
-    
-
     Brick7->AddChild(Brick8);
     Brick8->AddChild(Brick9);
     Brick9->AddChild(Brick10);
     
-    //background_renderer->setRoot(background);
-    
-    // Set a default position for our camera
     m_renderer->GetCamera(0)->SetCameraEyePosition(3.0,4.0f,21.0f);
     float cameraX = m_renderer->GetCamera(0)->GetEyeXPosition();
     float cameraY = m_renderer->GetCamera(0)->GetEyeYPosition();
@@ -394,29 +341,21 @@ void SDLGraphicsProgram::Loop(){
     float lastCameraZ;
     bool moneyGrabbed = false;
 
-    // Main loop flag
-    // If this is quit = 'true' then the program terminates.
     bool quit = false;
-    // Event handler that handles various events in SDL
-    // that are related to input and output
+
     SDL_Event e;
-    // Enable text input
+   
     SDL_StartTextInput();
 
-    // Set the camera speed for how fast we move.
     float cameraSpeed = 5.0f;
     float ground = 1.64;
 
     int upTraj = 0;
 
-    // While application is running
     while(!quit){
-
-        //Handle events on queue
         
         while(SDL_PollEvent( &e ) != 0){
-            // User posts an event to quit
-            // An example is hitting the "x" in the corner of the window.
+            
             if(e.type == SDL_QUIT){
                 quit = true;
             }
@@ -424,9 +363,9 @@ void SDLGraphicsProgram::Loop(){
 			    std::cout << "ESC: Goodbye! (Leaving MainApplicationLoop())" << std::endl;
                 quit = true;
             }
-            // Handle keyboard input for the camera class
+            
             if(e.type==SDL_MOUSEMOTION){
-                // Handle mouse movements
+                
                 int mouseX = e.motion.x;
                 int mouseY = e.motion.y;
                 //m_renderer->GetCamera(0)->MouseLook(mouseX, mouseY);
@@ -444,7 +383,7 @@ void SDLGraphicsProgram::Loop(){
             }
 
         } 
-    //std::cout << "Time: " << time << std::endl;
+    
     if(!frozen){
 
     if(upTraj > 0){
@@ -471,17 +410,16 @@ void SDLGraphicsProgram::Loop(){
     }   
     }
 
-        // Retrieve keyboard state
+        
     const Uint8 *state = SDL_GetKeyboardState(NULL);
     if(inputOn){
-            // Camera
-        // Update our position of the camera
+
         if (state[SDL_SCANCODE_W]) {
-            //m_renderer->GetCamera(0)->MoveForward(0.1f);
+            
             m_renderer->GetCamera(0)->MoveUp(0.1f);
         }
         if (state[SDL_SCANCODE_S]) {
-            //m_renderer->GetCamera(0)->MoveBackward(0.1f);
+            
             m_renderer->GetCamera(0)->MoveDown(0.1f);
         }
     
@@ -508,17 +446,6 @@ void SDLGraphicsProgram::Loop(){
         }
     }
 
-        // End SDL_PollEvent loop.
-        // ================== Use the planets ===============
-        // TODO:
-        //      After the planets have been created, and the hierarchy
-        //      has been made, you can transform them.
-        //      Note, you'll need to setup the scene graph world/local
-        //      transformation correctly first before the planets are shown.
-        //      
-        //      The 'Sun' for example will be the only object shown initially
-        //      since the rest of the planets are children (or grandchildren)
-        //      of the Sun.
         cameraX = m_renderer->GetCamera(0)->GetEyeXPosition();
         cameraY = m_renderer->GetCamera(0)->GetEyeYPosition();
         cameraZ = m_renderer->GetCamera(0)->GetEyeZPosition();
@@ -545,7 +472,7 @@ void SDLGraphicsProgram::Loop(){
         }
         
         Brick2->GetLocalTransform().LoadIdentity();		
-        // ... transform the Earth
+        
         Brick2->GetLocalTransform().Translate(2.0,0.0,0.0);
 
         if(sceneX >= 0.14 && sceneX < .29){
@@ -574,15 +501,13 @@ void SDLGraphicsProgram::Loop(){
                 }
             }
         }
-        // ... transform the Sun
 
         Brick3->GetLocalTransform().LoadIdentity();	
         
-        // ... transform the Moon
         Brick3->GetLocalTransform().Translate(4.0,0.0,0.0);
 
         Brick4->GetLocalTransform().LoadIdentity();	
-        // ... transform the Moon
+        
         Brick4->GetLocalTransform().Translate(2.0,2.0,0.0);
         if(!moneyGrabbed){
             Money->GetLocalTransform().LoadIdentity();
@@ -698,7 +623,6 @@ void SDLGraphicsProgram::Loop(){
 
         character->GetLocalTransform().LoadIdentity();
         character->GetLocalTransform().Scale(0.02, 0.05, 0.05);
-        //std::cout << Brick1->GetLocalTransform().GetInternalMatrix()[0][0] << std::endl;
         
         character->GetLocalTransform().Translate(characterX,characterY,characterZ);
 
@@ -746,7 +670,7 @@ void SDLGraphicsProgram::Loop(){
         }
         
         if((sceneX*24.7422680412 - enemyX) < 1.3 && (sceneX*24.7422680412 - enemyX) > -1 && characterY < 3.15){
-            //std::cout << "Hit!" << std::endl;
+            
             if(timer){
                 frozen = true;
                 inputOn = false;
@@ -773,7 +697,7 @@ void SDLGraphicsProgram::Loop(){
         if(lives == 0){
             inputOn = false;
             if(num == 0){
-                //background->PopChild();
+               
                 num += 1;
             }
             skull->GetLocalTransform().LoadIdentity();
@@ -787,11 +711,9 @@ void SDLGraphicsProgram::Loop(){
             youWin->GetLocalTransform().Scale(0.15,0.15,0.15);
             youWin->GetLocalTransform().Translate(0.45,0.85,3.4);
         }
-        //background_renderer->Update();
-        //background_renderer->Render();
-        // Update our scene through our renderer
+
         m_renderer->Update();
-        // Render our scene using our selected renderer
+        
         m_renderer->Render();
         if(!hitWall){
             lastCameraX = cameraX;
@@ -803,25 +725,24 @@ void SDLGraphicsProgram::Loop(){
         lastCharacterY = characterY;
 
 
-        // Delay to slow things down just a bit!
-        SDL_Delay(25);  // TODO: You can change this or implement a frame
-                        // independent movement method if you like.
-      	//Update screen of our specified window
+        
+        SDL_Delay(25);  
+                        
+      	
       	SDL_GL_SwapWindow(GetSDLWindow());
         rotate += 0.03;
         moonRotate += 0.15;
 	}
-    //Disable text input
+   
     SDL_StopTextInput();
 }
 
 
-// Get Pointer to Window
 SDL_Window* SDLGraphicsProgram::GetSDLWindow(){
   return m_window;
 }
 
-// Helper Function to get OpenGL Version Information
+
 void SDLGraphicsProgram::GetOpenGLVersionInfo(){
 	SDL_Log("(Note: If you have two GPU's, make sure the correct one is selected)");
 	SDL_Log("Vendor: %s",(const char*)glGetString(GL_VENDOR));

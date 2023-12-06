@@ -5,49 +5,38 @@
 #include <stdio.h>
 #include <memory>
 
-// Constructor
 Image::Image(std::string filepath) : m_filepath(filepath){
     
 }
 
-// Destructor
 Image::~Image (){
-    // Delete our pixel data.	
-    // Note: We could actually do this sooner
-    // in our rendering process.
+
     if(m_pixelData!=NULL){
         delete[] m_pixelData;
     }
 }
 
-// Little function for loading the pixel data
-// from a PPM image.
-// TODO: Expects a very specific version of PPM!
-//
-// flip - Will flip the pixels upside down in the data
-//        If you use this be consistent.
 void Image::LoadPPM(bool flip){
 
-  // Open an input file stream for reading a file
+
   std::ifstream ppmFile(m_filepath.c_str());
-  // If our file successfully opens, begin to process it.
+
   if (ppmFile.is_open()){
-      // line will store one line of input
+      
       std::string line;
-      // Our loop invariant is to continue reading input until
-      // we reach the end of the file and it reads in a NULL character
+
       std::cout << "Reading in ppm file: " << m_filepath << std::endl;
       unsigned int iteration = 0;
       unsigned int pos = 0;
       while ( getline (ppmFile,line) ){
-         // Ignore comments in the file
+         
          if (line[0]=='#'){
             continue;
          }
          if(line[0]=='P'){
             magicNumber = line;
          }else if(iteration==1){
-            // Returns first token 
+            
             char *token = strtok((char*)line.c_str(), " ");
              
             m_width = atoi(token);
@@ -65,10 +54,8 @@ void Image::LoadPPM(bool flip){
                 exit(1);
              }
          }else if(iteration==2){
-            // max color range is stored here
-            // TODO: Can be stored optionally
+
          }else{
-            //std::cout << line.c_str() << std::endl; 
             
             std::string delimiter = " ";
             size_t position = 0;
@@ -76,7 +63,6 @@ void Image::LoadPPM(bool flip){
             int loop = 0;
             while ((position = line.find(delimiter)) != std::string::npos) {
                 token = line.substr(0, position);
-                //std::cout << token << std::endl;
                 
                 m_pixelData[pos] = (uint8_t)atoi(token.c_str());
                 
@@ -85,7 +71,7 @@ void Image::LoadPPM(bool flip){
                 loop += 1;
             }
             if(!loop){
-                //std::cout << line << std::endl;
+                
                 m_pixelData[pos] = (uint8_t)atoi(line.c_str());
                 ++pos;
             }
@@ -98,14 +84,13 @@ void Image::LoadPPM(bool flip){
       std::cout << "Unable to open ppm file:" << m_filepath << std::endl;
   } 
 
-    // Flip all of the pixels
     if(flip){
-        // Copy all of the data to a temporary stack-allocated array
+        
         uint8_t* copyData = new uint8_t[m_width*m_height*3];
         for(int i =0; i < m_width*m_height*3; ++i){
             copyData[i]=m_pixelData[i];
         }
-        //memcpy(copyData,m_pixelData,(m_width*m_height*3)*sizeof(uint8_t));
+        
         unsigned int pos = (m_width*m_height*3)-1;
         for(int i =0; i < m_width*m_height*3; i+=3){
             m_pixelData[pos]=copyData[i+2];
