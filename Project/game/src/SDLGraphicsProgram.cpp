@@ -154,6 +154,9 @@ SceneNode* character;
 Object* panel4;
 SceneNode* Brick4;
 
+Object* enemy;
+SceneNode* Phantom;
+
 Object* panel5;
 SceneNode* Brick5;
 Object* panel6;
@@ -194,8 +197,14 @@ void SDLGraphicsProgram::Loop(){
     float characterX = 0.0;
     float characterY = 1.8;
     float characterZ = 6.75;
+
+    float enemyX = 12.0;
+    float enemyY = -2.8;
+    float enemyZ = -7.5;
+    int timer = 20;
     float sceneX;
     float lastSceneX;
+    float lastCharacterY;
     float sceneY;
     float sceneZ;
     bool jump = false;
@@ -203,6 +212,10 @@ void SDLGraphicsProgram::Loop(){
     int peak = 0;
     bool doubleJump = false;
     int lives = 3;
+    bool inputOn = true;
+    bool frozen = false;
+    float patrolNum = 0;
+    bool patrolDir = true;
 
     // Create new geometry for Earth's Moon
     sphere = new Sphere();
@@ -221,6 +234,12 @@ void SDLGraphicsProgram::Loop(){
     panel5->LoadTexture("brick.ppm");
     // Create a new node using sphere3 as the geometry
     Brick5 = new SceneNode(panel5);
+
+    // Create new geometry for Earth's Moon
+    enemy = new Canvas();
+    enemy->LoadTexture("monster.ppm");
+    // Create a new node using sphere3 as the geometry
+    Phantom = new SceneNode(enemy);
 
     // Create new geometry for Earth's Moon
     panel6 = new Canvas();
@@ -318,6 +337,8 @@ void SDLGraphicsProgram::Loop(){
     background->AddChild(BrockFace2);
     background->AddChild(BrockFace3);
 
+    dollar->AddChild(Phantom);
+
     dollar->AddChild(zero);
     dollar->AddChild(hundred);
 
@@ -332,6 +353,8 @@ void SDLGraphicsProgram::Loop(){
     Brick3->AddChild(Brick5);
     Brick5->AddChild(Brick6);
     Brick6->AddChild(Brick7);
+
+    
 
     Brick7->AddChild(Brick8);
     Brick8->AddChild(Brick9);
@@ -400,6 +423,8 @@ void SDLGraphicsProgram::Loop(){
 
         } 
     //std::cout << "Time: " << time << std::endl;
+    if(!frozen){
+
     if(upTraj > 0){
         
         characterY += 0.15;
@@ -422,10 +447,11 @@ void SDLGraphicsProgram::Loop(){
             }
         }
     }   
+    }
 
         // Retrieve keyboard state
     const Uint8 *state = SDL_GetKeyboardState(NULL);
-    if(lives > 0){
+    if(inputOn){
             // Camera
         // Update our position of the camera
         if (state[SDL_SCANCODE_W]) {
@@ -526,20 +552,6 @@ void SDLGraphicsProgram::Loop(){
                 }
             }
         }
-        /*
-        if(sceneX >= 0.14 && sceneX < .29 && !jump){
-            if(characterY < (ground-1)){
-                //std::cout << "firing" << std::endl;
-                //std::cout << "ground: " << ground << std::endl;
-                characterY -= 0.15;
-            }else if(characterY > ground){
-                characterY -= 0.15;
-            }
-        }
-        */
-
-        
-        
         // ... transform the Sun
 
         Brick3->GetLocalTransform().LoadIdentity();	
@@ -578,6 +590,29 @@ void SDLGraphicsProgram::Loop(){
         }
         Brick5->GetLocalTransform().LoadIdentity();	
         Brick5->GetLocalTransform().Translate(8.0,0.0,0.0);
+        if(!frozen){
+
+        if(patrolDir){
+            patrolNum += 0.002;
+            enemyX += patrolNum;
+            if(enemyX > 14.2){
+                patrolNum = 0;
+                patrolDir = false;
+            }
+        }else{
+            patrolNum -= 0.002;
+            enemyX += patrolNum;
+            if(enemyX < 10.3){
+                patrolNum = 0;
+                patrolDir = true;
+            }
+        }
+        }
+        Phantom->GetLocalTransform().LoadIdentity();	
+        Phantom->GetLocalTransform().Scale(3,3,3);
+        Phantom->GetLocalTransform().Translate(enemyX-(sceneX*25.5), enemyY, enemyZ);
+
+        
 
         Brick6->GetLocalTransform().LoadIdentity();	
         Brick6->GetLocalTransform().Translate(2.0,0.0,0.0);
@@ -593,6 +628,47 @@ void SDLGraphicsProgram::Loop(){
 
         Brick10->GetLocalTransform().LoadIdentity();	
         Brick10->GetLocalTransform().Translate(4.0,0.0,0.0);
+
+        if(sceneX > .604 && sceneX < .635){
+            ground = -4;
+        }
+        if(sceneX > .635 && sceneX < .725){
+            ground = 4.2;
+            if(characterY < ground){
+                hitWall = true;
+                sceneX = lastSceneX;
+                m_renderer->GetCamera(0)->SetCameraEyePosition(lastCameraX,lastCameraY,lastCameraZ);
+                characterY -= 0.05;
+            }
+        }
+        if(sceneX > .725 && sceneX < .76){
+            ground = -4;
+        }
+        if(sceneX > .76 && sceneX < .854){
+            ground = 6.7;
+            if(characterY < ground){
+                hitWall = true;
+                sceneX = lastSceneX;
+                m_renderer->GetCamera(0)->SetCameraEyePosition(lastCameraX,lastCameraY,lastCameraZ);
+                characterY -= 0.05;
+            }
+        }
+
+        if(sceneX > .854 && sceneX < .888){
+            ground = -4;
+        }
+        if(sceneX > .888 && sceneX < .97){
+            ground = 6.7;
+            if(characterY < ground){
+                hitWall = true;
+                sceneX = lastSceneX;
+                m_renderer->GetCamera(0)->SetCameraEyePosition(lastCameraX,lastCameraY,lastCameraZ);
+                characterY -= 0.05;
+            }
+        }
+        if(sceneX > .97){
+            ground = -4;
+        }
 
         character->GetLocalTransform().LoadIdentity();
         character->GetLocalTransform().Scale(0.02, 0.05, 0.05);
@@ -616,9 +692,10 @@ void SDLGraphicsProgram::Loop(){
         dollar->GetLocalTransform().Scale(0.02,0.025,0.025);
         dollar->GetLocalTransform().Translate(-1.4,10.0,24.0);
 
-        
+        if(!frozen){
         if((characterY-0.15) >= ground && !jump){
             characterY -= 0.15;
+        }
         }
         
 
@@ -627,6 +704,7 @@ void SDLGraphicsProgram::Loop(){
         std::cout << "cameraX: " << cameraX << std::endl;
         std::cout << "cameraY: " << cameraY << std::endl;
         std::cout << "cameraZ: " << cameraZ << std::endl;
+        std::cout << "enemyX: " << enemyX << std::endl;
         std::cout << std::endl;
 
         if((characterY-0.15) <= -4 ){
@@ -641,9 +719,34 @@ void SDLGraphicsProgram::Loop(){
             m_renderer->GetCamera(0)->SetCameraEyePosition(cameraX,cameraY,cameraZ);
             lives -=1;
         }
+        
+        if((sceneX*24.7422680412 - enemyX) < 1.3 && (sceneX*24.7422680412 - enemyX) > -1 && characterY < 3.15){
+            //std::cout << "Hit!" << std::endl;
+            if(timer){
+                frozen = true;
+                inputOn = false;
+                timer -= 1;
+            }else{
+                frozen = false;
+                inputOn = true;
+                background->PopChild();
+                sceneX = 0;
+                characterX = 0.0;
+                characterY = 1.8;
+                characterZ = 6.75;
+                cameraX = 3;
+                cameraY = 4;
+                cameraZ = 21;
+                m_renderer->GetCamera(0)->SetCameraEyePosition(cameraX,cameraY,cameraZ);
+                lives -=1;
+                timer = 20;
+            }
+
+        }
 
         int num = 0;
         if(lives == 0){
+            inputOn = false;
             if(num == 0){
                 //background->PopChild();
                 num += 1;
@@ -665,6 +768,7 @@ void SDLGraphicsProgram::Loop(){
         }
 
         lastSceneX = sceneX;
+        lastCharacterY = characterY;
 
 
         // Delay to slow things down just a bit!
