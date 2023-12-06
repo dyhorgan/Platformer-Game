@@ -10,11 +10,11 @@ OpenGL 2D Platformer
 * Name and partners name(At most teams of 2 folks total)
   * Team member 1: Dylan Horgan
 
-* How many hours did it take you to complete this final project? ?
+* How many hours did it take you to complete this final project? 80
 * Did you collaborate or share ideas with any other students/TAs/Professors? No
 * Did you use any external resources? 
   * Note it is fair to utilize some tutorials--cite them here. You **must** add your own personal touch however!
-  * *edit this*
+  * Assignment11
   * *edit this*
   * *edit this*
   * (Optional) What was the most interesting part of the Final Assignment? How could the instructor improve the final project?
