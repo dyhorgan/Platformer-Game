@@ -175,8 +175,8 @@ void SDLGraphicsProgram::Loop(){
     float enemyY = -2.8;
     float enemyZ = -7.5;
 
-    float flagX = 25.8;
-    float flagY = 2.2;
+    float flagX = 25;
+    float flagY = 0.7;
     float flagZ = -7.5;
 
     int timer = 20;
@@ -195,6 +195,11 @@ void SDLGraphicsProgram::Loop(){
     float patrolNum = 0;
     bool patrolDir = true;
     bool won = false;
+    float movingGround = 6.7;
+    float movingBrick = 3.0;
+    float platformMod = 0;
+    bool platformDown = true;
+    bool gravity = true;
 
     sphere = new Sphere();
     sphere->LoadTexture("dollarsigns.ppm");
@@ -330,7 +335,7 @@ void SDLGraphicsProgram::Loop(){
 
     Brick7->AddChild(Brick8);
     Brick8->AddChild(Brick9);
-    Brick9->AddChild(Brick10);
+    Brick8->AddChild(Brick10);
     
     m_renderer->GetCamera(0)->SetCameraEyePosition(3.0,4.0f,21.0f);
     float cameraX = m_renderer->GetCamera(0)->GetEyeXPosition();
@@ -579,10 +584,10 @@ void SDLGraphicsProgram::Loop(){
         Brick8->GetLocalTransform().Translate(4.0,3.0,0.0);
 
         Brick9->GetLocalTransform().LoadIdentity();	
-        Brick9->GetLocalTransform().Translate(4.0,3.0,0.0);
+        Brick9->GetLocalTransform().Translate(4.0,movingBrick,0.0);
 
         Brick10->GetLocalTransform().LoadIdentity();	
-        Brick10->GetLocalTransform().Translate(7.0,0.0,0.0);
+        Brick10->GetLocalTransform().Translate(10.0,1.5,0.0);
 
         if(sceneX > .604 && sceneX < .635){
             ground = -4;
@@ -603,32 +608,37 @@ void SDLGraphicsProgram::Loop(){
         if(sceneX > .725 && sceneX < .76){
             ground = -4;
         }
-        if(sceneX > .76 && sceneX < .854){
-            ground = 6.7;
-            if(characterY < ground && characterY > 2.75){
+        if(sceneX > .76 && sceneX < .855){
+            ground = movingGround+.9;
+            if(characterY < (ground-.15) && characterY > ground-.25){
                 hitWall = true;
                 sceneX = lastSceneX;
                 m_renderer->GetCamera(0)->SetCameraEyePosition(lastCameraX,lastCameraY,lastCameraZ);
                 characterY -= 0.05;
             }
+            if(characterY > (ground-.15) && (characterY - ground) < .29){
+                
+                characterY = ground + .29;
+                
+            }
         }
 
-        if(sceneX > .854 && sceneX < .985){
+        if(sceneX > .855 && sceneX < .95){
             ground = -4;
         }
-        if(sceneX > .985 && sceneX < 1.07){
-            ground = 6.7;
+        if(sceneX > .95 && sceneX < 1.07){
+            ground = 5.4;
             if(characterY < ground){
                 hitWall = true;
                 sceneX = lastSceneX;
                 m_renderer->GetCamera(0)->SetCameraEyePosition(lastCameraX,lastCameraY,lastCameraZ);
                 characterY -= 0.05;
-            }else if(characterY < 6.85){
+            }else if(characterY < 6.25){
                 won = true;
                 frozen = true;
             }
         }
-        if(sceneX > .97){
+        if(sceneX > 1.07){
             ground = -4;
         }
 
@@ -653,12 +663,31 @@ void SDLGraphicsProgram::Loop(){
         dollar->GetLocalTransform().Scale(0.02,0.025,0.025);
         dollar->GetLocalTransform().Translate(-1.4,10.0,24.0);
         
-        if(!frozen){
+        if(!frozen && gravity){
             if( ( ((characterY-0.15) >= ground) && !jump ) || (((characterY+3) < ground) && !jump) ){
                 characterY -= 0.15;
             }
         }
         
+        if(!gravity){
+            gravity = true;
+        }
+
+        if(!frozen){
+            if(platformDown){
+                platformMod -= .01;
+            }else{
+                platformMod += .01;
+            }
+            movingGround += platformMod;
+            movingBrick += platformMod;
+            if(movingGround < 2.7){
+                platformDown = false;
+            }
+            if(movingGround > 2.9){
+                platformDown = true;
+            }
+        }
         
         std::cout << "sceneX: " << sceneX << std::endl;
         std::cout << "char Y: " << characterY << std::endl;
