@@ -177,6 +177,9 @@ SceneNode* Brick10;
 Object* deathCanvas;
 SceneNode* skull;
 
+Object* winCanvas;
+SceneNode* youWin;
+
 Object* symbol;
 SceneNode* dollar;
 
@@ -224,6 +227,7 @@ void SDLGraphicsProgram::Loop(){
     bool frozen = false;
     float patrolNum = 0;
     bool patrolDir = true;
+    bool won = false;
 
     // Create new geometry for Earth's Moon
     sphere = new Sphere();
@@ -303,6 +307,10 @@ void SDLGraphicsProgram::Loop(){
     deathCanvas->LoadTexture("skull.ppm");
     skull = new SceneNode(deathCanvas);
 
+    winCanvas = new Canvas();
+    winCanvas->LoadTexture("You-Win.ppm");
+    youWin = new SceneNode(winCanvas);
+
     symbol = new Canvas();
     symbol->LoadTexture("moneybag.ppm");
     dollar = new SceneNode(symbol);
@@ -343,6 +351,7 @@ void SDLGraphicsProgram::Loop(){
     // Make the Earth a child of the Sun
     //background->AddChild(Brick1);
     background->AddChild(dollar);
+    background->AddChild(youWin);
     background->AddChild(skull);
     background->AddChild(character);
     background->AddChild(BrockFace);
@@ -679,6 +688,8 @@ void SDLGraphicsProgram::Loop(){
                 sceneX = lastSceneX;
                 m_renderer->GetCamera(0)->SetCameraEyePosition(lastCameraX,lastCameraY,lastCameraZ);
                 characterY -= 0.05;
+            }else if(characterY < 6.85){
+                won = true;
             }
         }
         if(sceneX > .97){
@@ -708,12 +719,11 @@ void SDLGraphicsProgram::Loop(){
         dollar->GetLocalTransform().Translate(-1.4,10.0,24.0);
 
         if(!frozen){
-        if((characterY-0.15) >= ground && !jump){
-            characterY -= 0.15;
-        }
+            if((characterY-0.15) >= ground && !jump){
+                characterY -= 0.15;
+            }
         }
         
-
         std::cout << "sceneX: " << sceneX << std::endl;
         std::cout << "char Y: " << characterY << std::endl;
         std::cout << "cameraX: " << cameraX << std::endl;
@@ -769,6 +779,13 @@ void SDLGraphicsProgram::Loop(){
             skull->GetLocalTransform().LoadIdentity();
             skull->GetLocalTransform().Scale(0.2,0.2,0.2);
             skull->GetLocalTransform().Translate(0.45,0.85,2.4);
+        }
+        if(won){
+            frozen = true;
+            inputOn = false;
+            youWin->GetLocalTransform().LoadIdentity();
+            youWin->GetLocalTransform().Scale(0.15,0.15,0.15);
+            youWin->GetLocalTransform().Translate(0.45,0.85,3.4);
         }
         //background_renderer->Update();
         //background_renderer->Render();
