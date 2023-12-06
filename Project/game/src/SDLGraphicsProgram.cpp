@@ -298,7 +298,8 @@ void SDLGraphicsProgram::Loop(){
     life3 = new Canvas();
     life3->LoadTexture("BrockFace.ppm");
     BrockFace3 = new SceneNode(life3);
-
+    
+    //Character created
     sprite = new Canvas();
     sprite->LoadTexture("brock.ppm");
     character = new SceneNode(sprite);
@@ -469,6 +470,7 @@ void SDLGraphicsProgram::Loop(){
         }
         if(sceneX > -0.05 && sceneX < 0.1){
             ground = 1.64;
+            //Example of Wall
             if(characterY < ground){
                 hitWall = true;
                 sceneX = lastSceneX;
