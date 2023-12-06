@@ -237,7 +237,7 @@ void SDLGraphicsProgram::Loop(){
     Brick8 = new SceneNode(panel8);
 
     panel9 = new Canvas();
-    panel9->LoadTexture("brick.ppm");
+    panel9->LoadTexture("trampoline.ppm");
     
     Brick9 = new SceneNode(panel9);
 
