@@ -157,6 +157,9 @@ SceneNode* Brick4;
 Object* enemy;
 SceneNode* Phantom;
 
+Object* goal;
+SceneNode* flags; 
+
 Object* panel5;
 SceneNode* Brick5;
 Object* panel6;
@@ -201,6 +204,11 @@ void SDLGraphicsProgram::Loop(){
     float enemyX = 12.0;
     float enemyY = -2.8;
     float enemyZ = -7.5;
+
+    float flagX = 23.4;
+    float flagY = 2.2;
+    float flagZ = -7.5;
+
     int timer = 20;
     float sceneX;
     float lastSceneX;
@@ -299,6 +307,10 @@ void SDLGraphicsProgram::Loop(){
     symbol->LoadTexture("moneybag.ppm");
     dollar = new SceneNode(symbol);
 
+    goal = new Canvas();
+    goal->LoadTexture("flags.ppm");
+    flags = new SceneNode(goal);
+
     number1 = new Canvas();
     number1->LoadTexture("num000.ppm");
     zero = new SceneNode(number1);
@@ -338,6 +350,7 @@ void SDLGraphicsProgram::Loop(){
     background->AddChild(BrockFace3);
 
     dollar->AddChild(Phantom);
+    dollar->AddChild(flags);
 
     dollar->AddChild(zero);
     dollar->AddChild(hundred);
@@ -612,7 +625,9 @@ void SDLGraphicsProgram::Loop(){
         Phantom->GetLocalTransform().Scale(3,3,3);
         Phantom->GetLocalTransform().Translate(enemyX-(sceneX*25.5), enemyY, enemyZ);
 
-        
+        flags->GetLocalTransform().LoadIdentity();	
+        flags->GetLocalTransform().Scale(3,3,3);
+        flags->GetLocalTransform().Translate(flagX-(sceneX*25.5), flagY, flagZ);
 
         Brick6->GetLocalTransform().LoadIdentity();	
         Brick6->GetLocalTransform().Translate(2.0,0.0,0.0);
