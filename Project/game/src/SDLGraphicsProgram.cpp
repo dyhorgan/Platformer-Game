@@ -421,18 +421,18 @@ void SDLGraphicsProgram::Loop(){
 
         if (state[SDL_SCANCODE_W]) {
             
-            m_renderer->GetCamera(0)->MoveUp(0.1f);
+            //m_renderer->GetCamera(0)->MoveUp(0.1f);
         }
         if (state[SDL_SCANCODE_S]) {
             
-            m_renderer->GetCamera(0)->MoveDown(0.1f);
+           // m_renderer->GetCamera(0)->MoveDown(0.1f);
         }
     
         if (state[SDL_SCANCODE_A]) {
-            m_renderer->GetCamera(0)->MoveLeft(0.1f);
+            //m_renderer->GetCamera(0)->MoveLeft(0.1f);
         }	
         if (state[SDL_SCANCODE_D]) {
-            m_renderer->GetCamera(0)->MoveRight(0.1f);
+            //m_renderer->GetCamera(0)->MoveRight(0.1f);
         }
         if (state[SDL_SCANCODE_RIGHT]) {
             sceneX += 0.005;
@@ -444,13 +444,12 @@ void SDLGraphicsProgram::Loop(){
         } 
     
         if (state[SDL_SCANCODE_UP]) {
-            m_renderer->GetCamera(0)->MoveForward(0.1f);
+            //m_renderer->GetCamera(0)->MoveForward(0.1f);
         }	
         if (state[SDL_SCANCODE_DOWN]) {
-            m_renderer->GetCamera(0)->MoveBackward(0.1f);
+           // m_renderer->GetCamera(0)->MoveBackward(0.1f);
         }
     }
-
         cameraX = m_renderer->GetCamera(0)->GetEyeXPosition();
         cameraY = m_renderer->GetCamera(0)->GetEyeYPosition();
         cameraZ = m_renderer->GetCamera(0)->GetEyeZPosition();
