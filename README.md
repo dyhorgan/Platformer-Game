@@ -1,6 +1,6 @@
 
 
-OpenGL 2D Platformer
+## OpenGL 2D Platformer
 
 ## YouTube/Dropbox/Drive Link: Edit this line -- Put your link to your video(Preferably on YouTube) here (see deliverables).
 
